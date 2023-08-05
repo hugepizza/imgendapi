@@ -99,7 +99,7 @@ router.post('/api/c/:url', async (request, kv) => {
 			return errors[404]();
 		}
 		const fetchedEssay = JSON.parse(essayStr) as essay;
-		if (!fetchedEssay.code || fetchedEssay.code != requestEssay.code) {
+		if (fetchedEssay.code && fetchedEssay.code != requestEssay.code) {
 			return errors[401]();
 		}
 		fetchedEssay.updatedAt = new Date().toISOString();
@@ -108,7 +108,7 @@ router.post('/api/c/:url', async (request, kv) => {
 			fetchedEssay.code = requestEssay.newCode;
 		}
 		if (requestEssay.newUrl && oldUrl != requestEssay.newUrl) {
-			if (await kvDB.get(newUrl)) {
+			if (await kvDB.get(requestEssay.newUrl)) {
 				return errors[401]();
 			}
 			await kvDB.delete(oldUrl);
